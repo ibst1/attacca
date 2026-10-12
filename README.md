@@ -38,11 +38,12 @@ Undo everything: double-click **`Unregister.cmd`** (or run `Unregister-Attacca.p
 | File | Result |
 |---|---|
 | Inside a registered vault | Opens in Obsidian, in that vault (new window if the vault is closed) |
-| `.md` outside every vault | Opens in the fallback editor (Notepad++) |
+| `.md` outside every vault | Opens in the fallback editor (Notepad++, else Notepad) |
 | Other file outside every vault | Opens with the Windows default program |
 
-Change the fallback editor at the top of `Attacca.ps1` (`$FallbackEditor`). Set it to `""` to use
-the Windows default program. No re-registration needed.
+Change the fallback editor at the top of `Attacca.ps1` (`$FallbackEditor`). If it is missing or `""`,
+`.md` files open in Notepad - never in the Windows default program, which is
+Attacca itself and would start it again in a loop. No re-registration needed.
 
 ## Files
 

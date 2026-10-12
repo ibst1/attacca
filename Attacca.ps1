@@ -6,7 +6,7 @@
 # Files outside every registered vault are opened in the fallback editor.
 
 # ---------- Settings ----------
-$FallbackEditor = "C:\Program Files\Notepad++\notepad++.exe"   # "" = use the Windows default program
+$FallbackEditor = "C:\Program Files\Notepad++\notepad++.exe"   # for .md outside the vaults; missing or "" = Notepad
 $VaultRegistry  = Join-Path $env:APPDATA "Obsidian\obsidian.json"
 # ------------------------------
 
@@ -33,10 +33,15 @@ function Open-InObsidian([string]$Path) {
         Start-Process ("obsidian://open?path=" + [uri]::EscapeDataString($full))
         return
     }
-    # Outside every vault
-    if ($FallbackEditor -and (Test-Path -LiteralPath $FallbackEditor) -and $full -match '\.md$') {
-        Start-Process -FilePath $FallbackEditor -ArgumentList ('"' + $full + '"')
+    # Outside every vault. Never hand a .md to the Windows default program: that
+    # is Attacca itself once registered, which would start itself over and over.
+    # The same goes for any file when Attacca is already the one that launched
+    # this run (the marker below is inherited by child processes).
+    if ($full -match '\.md$' -or $env:ATTACCA_RUNNING) {
+        $editor = if ($FallbackEditor -and (Test-Path -LiteralPath $FallbackEditor)) { $FallbackEditor } else { "notepad.exe" }
+        Start-Process -FilePath $editor -ArgumentList ('"' + $full + '"')
     } else {
+        $env:ATTACCA_RUNNING = "1"
         Start-Process -FilePath $full
     }
 }
