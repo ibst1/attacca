@@ -2,3 +2,7 @@
 Thumbs.db
 desktop.ini
 *.bak
+
+# build output (build.ps1)
+build/
+dist/
